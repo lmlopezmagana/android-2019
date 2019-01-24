@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "android.salesianostriana.com.miprimerasynctask"
+        applicationId "android.salesianostriana.com.a03_retrofit"
         minSdkVersion 15
         targetSdkVersion 28
         versionCode 1
@@ -25,6 +25,11 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.8.0'
+
 
 
 }
