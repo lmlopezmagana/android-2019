@@ -1,5 +1,6 @@
 package android.salesianostriana.com.a12_login;
 
+import android.content.Intent;
 import android.salesianostriana.com.a12_login.retrofit.generator.ServiceGenerator;
 import android.salesianostriana.com.a12_login.model.LoginResponse;
 import android.salesianostriana.com.a12_login.retrofit.services.LoginService;
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         btn_registro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(MainActivity.this, RegistroActivity.class));
             }
         });
 
