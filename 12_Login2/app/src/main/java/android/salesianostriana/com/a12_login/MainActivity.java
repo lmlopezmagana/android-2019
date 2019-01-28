@@ -1,7 +1,7 @@
 package android.salesianostriana.com.a12_login;
 
 import android.salesianostriana.com.a12_login.retrofit.generator.ServiceGenerator;
-import android.salesianostriana.com.a12_login.retrofit.services.LoginReponse;
+import android.salesianostriana.com.a12_login.model.LoginResponse;
 import android.salesianostriana.com.a12_login.retrofit.services.LoginService;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     EditText email, password;
-    Button btn_login;
+    Button btn_login, btn_registro;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         btn_login = findViewById(R.id.btn_login);
+        btn_registro = findViewById(R.id.btn_registro);
 
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,13 +45,13 @@ public class MainActivity extends AppCompatActivity {
 
 
                 LoginService service = ServiceGenerator.createService(LoginService.class);
-                Call<LoginReponse> call =
+                Call<LoginResponse> call =
                         service.doLogin("lNeTI8waAqmpUZa7QSiLv53rqSnlsldv",
                                 basic);
 
-                call.enqueue(new Callback<LoginReponse>() {
+                call.enqueue(new Callback<LoginResponse>() {
                     @Override
-                    public void onResponse(Call<LoginReponse> call, Response<LoginReponse> response) {
+                    public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                         if (response.code() != 201) {
                           // error
                             Log.e("RequestError", response.message());
@@ -62,12 +63,21 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<LoginReponse> call, Throwable t) {
+                    public void onFailure(Call<LoginResponse> call, Throwable t) {
                         Log.e("NetworkFailure", t.getMessage());
                         Toast.makeText(MainActivity.this, "Error de conexión", Toast.LENGTH_SHORT).show();
                     }
                 });
 
+
+            }
+        });
+
+
+
+        btn_registro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
             }
         });
