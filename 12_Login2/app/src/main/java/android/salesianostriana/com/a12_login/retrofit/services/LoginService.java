@@ -23,9 +23,9 @@ public interface LoginService {
     Call<LoginResponse> doLogin();
 
 
-    @POST("/users")
-    Call<LoginResponse> doRegister(@Query("access_token") String access_token,
-                                   @Body Registro registro);
+    // @POST("/users")
+    // Call<LoginResponse> doRegister(@Query("access_token") String access_token,
+    //                               @Body Registro registro);
 
     @POST("/users")
     Call<LoginResponse> doRegister(@Body Registro registro);

@@ -34,14 +34,31 @@ public class ServiceGenerator {
             new HttpLoggingInterceptor()
                     .setLevel(HttpLoggingInterceptor.Level.BODY);
 
-    private static OkHttpClient.Builder httpClient =
+    private static OkHttpClient.Builder httpClientBuilder =
             new OkHttpClient.Builder();
 
+    /**
+     * Crea un servicio sin autenticación básica o JWT
+     * Tan solo agrega la MASTER_KEY como un parámetro con nombre access_token
+     *
+     * @param serviceClass Tipo de servicio a crear
+     * @return El servicio ya creado
+     */
     public static <S> S createService(Class<S> serviceClass) {
         return createService(serviceClass, null, TipoAutenticacion.SIN_AUTENTICACION);
     }
 
-
+    /**
+     * Crea un servicio con autenticación básica.
+     * - Agrega la MASTER_KEY como un parámetro en la query con nombre access_token
+     * - Añade el encabezado Authorizacion Basic asdñljkadsfñlkjfadsñklsa
+     *
+     *
+     * @param serviceClass
+     * @param username
+     * @param password
+     * @return
+     */
     public static <S> S createService(Class<S> serviceClass, String username, String password) {
         if (!(username.isEmpty() || password.isEmpty())) {
             String credentials = Credentials.basic(username, password);
@@ -49,6 +66,7 @@ public class ServiceGenerator {
         }
         return createService(serviceClass, null, TipoAutenticacion.SIN_AUTENTICACION);
     }
+
 
     public static <S> S createService(Class<S> serviceClass, final String authtoken, final TipoAutenticacion tipo) {
 
@@ -60,14 +78,16 @@ public class ServiceGenerator {
             y se requiere la autenticación por JWT).
          */
 
-        httpClient.interceptors().clear();
+
 
         if (retrofit == null || tipoActual != tipo ) {
 
-            httpClient.addInterceptor(logging);
+            httpClientBuilder.interceptors().clear();
+
+            httpClientBuilder.addInterceptor(logging);
 
             // Interceptor que añade dos encabezados
-            httpClient.addInterceptor(new Interceptor() {
+            httpClientBuilder.addInterceptor(new Interceptor() {
                 @Override
                 public Response intercept(Chain chain) throws IOException {
                     Request original = chain.request();
@@ -84,7 +104,7 @@ public class ServiceGenerator {
 
             if (tipo == TipoAutenticacion.SIN_AUTENTICACION || tipo == TipoAutenticacion.BASIC ) {
                 // Añadimos el interceptor de la master key
-                httpClient.addInterceptor(new Interceptor() {
+                httpClientBuilder.addInterceptor(new Interceptor() {
                     @Override
                     public Response intercept(Chain chain) throws IOException {
                         Request original = chain.request();
@@ -107,7 +127,7 @@ public class ServiceGenerator {
             if (authtoken != null) {
 
 
-                httpClient.addInterceptor(new Interceptor() {
+                httpClientBuilder.addInterceptor(new Interceptor() {
                     @Override
                     public Response intercept(Chain chain) throws IOException {
                         Request original = chain.request();
@@ -130,7 +150,7 @@ public class ServiceGenerator {
 
             tipoActual = tipo;
 
-            builder.client(httpClient.build());
+            builder.client(httpClientBuilder.build());
             retrofit = builder.build();
         }
 

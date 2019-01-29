@@ -1,6 +1,7 @@
 package android.salesianostriana.com.a12_login;
 
 import android.app.ListActivity;
+import android.salesianostriana.com.a12_login.model.ResponseContainer;
 import android.salesianostriana.com.a12_login.model.User;
 import android.salesianostriana.com.a12_login.retrofit.generator.ServiceGenerator;
 import android.salesianostriana.com.a12_login.retrofit.generator.TipoAutenticacion;
@@ -29,21 +30,21 @@ public class UserListActivity extends ListActivity {
         OtherService service = ServiceGenerator.createService(OtherService.class,
                 ServiceGenerator.jwtToken, TipoAutenticacion.JWT);
 
-        Call<List<User>> callList =  service.listUsers();
+        Call<ResponseContainer<User>> callList =  service.listUsers();
 
 
-        callList.enqueue(new Callback<List<User>>() {
+        callList.enqueue(new Callback<ResponseContainer<User>>() {
             @Override
-            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+            public void onResponse(Call<ResponseContainer<User>> call, Response<ResponseContainer<User>> response) {
                 if (response.isSuccessful()) {
-                    cargarDatos(response.body());
+                    cargarDatos(response.body().getRows());
                 } else {
                     // Toast
                 }
             }
 
             @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
+            public void onFailure(Call<ResponseContainer<User>> call, Throwable t) {
                     // Toast
             }
         });
