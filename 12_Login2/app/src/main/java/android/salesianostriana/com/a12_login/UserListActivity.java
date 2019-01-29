@@ -54,7 +54,7 @@ public class UserListActivity extends ListActivity {
     }
 
     public void cargarDatos(List<User> datos) {
-        setListAdapter(new ArrayAdapter<User>(this, android.R.layout.simple_list_item_1, datos) {
+        setListAdapter(new ArrayAdapter<User>(this, android.R.layout.simple_list_item_2, datos) {
 
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
