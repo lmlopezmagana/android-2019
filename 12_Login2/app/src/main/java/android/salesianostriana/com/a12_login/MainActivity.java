@@ -40,15 +40,13 @@ public class MainActivity extends AppCompatActivity {
                 String email_txt = email.getText().toString();
                 String password_txt = password.getText().toString();
 
-                String credentials = email_txt + ":" + password_txt;
+                // String credentials = email_txt + ":" + password_txt;
 
-                final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                // final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
 
 
-                LoginService service = ServiceGenerator.createService(LoginService.class);
-                Call<LoginResponse> call =
-                        service.doLogin("lNeTI8waAqmpUZa7QSiLv53rqSnlsldv",
-                                basic);
+                LoginService service = ServiceGenerator.createService(LoginService.class, email_txt, password_txt);
+                Call<LoginResponse> call = service.doLogin();
 
                 call.enqueue(new Callback<LoginResponse>() {
                     @Override
@@ -59,7 +57,14 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "Error de petición", Toast.LENGTH_SHORT).show();
                         } else {
                             // exito
-                            Toast.makeText(MainActivity.this, response.body().getToken(), Toast.LENGTH_LONG).show();
+                            // Toast.makeText(MainActivity.this, response.body().getToken(), Toast.LENGTH_LONG).show();
+                            /*
+                                Pasos:
+                                    1) Almacenar el token donde corresponda.
+                                    2) Lanzar el siguiente Activity.
+                             */
+                            ServiceGenerator.jwtToken = response.body().getToken();
+                            startActivity(new Intent(MainActivity.this, UserListActivity.class));
                         }
                     }
 

@@ -1,5 +1,6 @@
 package android.salesianostriana.com.a12_login;
 
+import android.content.Intent;
 import android.salesianostriana.com.a12_login.model.LoginResponse;
 import android.salesianostriana.com.a12_login.model.Registro;
 import android.salesianostriana.com.a12_login.retrofit.generator.ServiceGenerator;
@@ -45,18 +46,23 @@ public class RegistroActivity extends AppCompatActivity {
 
                 LoginService service = ServiceGenerator.createService(LoginService.class);
 
-                Call<LoginResponse> loginReponseCall = service
-                        .doRegister("lNeTI8waAqmpUZa7QSiLv53rqSnlsldv",
-                                registro);
+                Call<LoginResponse> loginReponseCall = service.doRegister(registro);
+                        //.doRegister("lNeTI8waAqmpUZa7QSiLv53rqSnlsldv",
+                        //        registro);
 
                 loginReponseCall.enqueue(new Callback<LoginResponse>() {
                     @Override
                     public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                         if (response.code() == 201) {
                             // éxito
-                            // startActivity(new Intent(RegistroActivity.this, NuevoActivity.class));
-                            Toast.makeText(RegistroActivity.this, "Usuario registrado y logeado con éxito", Toast.LENGTH_LONG).show();
-                            Log.d("token", response.body().getToken());
+                            /*
+                                Pasos:
+                                    1) Almacenar el token donde corresponda.
+                                    2) Lanzar el siguiente Activity.
+                             */
+                            ServiceGenerator.jwtToken = response.body().getToken();
+                            startActivity(new Intent(RegistroActivity.this, UserListActivity.class));                            // Toast.makeText(RegistroActivity.this, "Usuario registrado y logeado con éxito", Toast.LENGTH_LONG).show();
+                            // Log.d("token", response.body().getToken());
 
                         } else {
                             // error

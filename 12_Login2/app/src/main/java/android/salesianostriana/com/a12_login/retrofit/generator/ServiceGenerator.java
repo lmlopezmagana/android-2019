@@ -2,6 +2,8 @@ package android.salesianostriana.com.a12_login.retrofit.generator;
 
 import java.io.IOException;
 
+import okhttp3.Credentials;
+import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -13,6 +15,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ServiceGenerator {
 
     private static final String BASE_URL = "https://authentication-fppitlaelx.now.sh/";
+    public static String MASTER_KEY = "lNeTI8waAqmpUZa7QSiLv53rqSnlsldv";
+
+    // Solución temporal
+    public static String jwtToken = null;
+
 
     private static Retrofit.Builder builder =
             new Retrofit.Builder()
@@ -20,7 +27,9 @@ public class ServiceGenerator {
                     .addConverterFactory(GsonConverterFactory.create());
 
     private static Retrofit retrofit = null;
+    private static TipoAutenticacion tipoActual = null;
 
+    // Interceptor que imprime por el Log todas las peticiones y respuestas
     private static HttpLoggingInterceptor logging =
             new HttpLoggingInterceptor()
                     .setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -29,10 +38,35 @@ public class ServiceGenerator {
             new OkHttpClient.Builder();
 
     public static <S> S createService(Class<S> serviceClass) {
+        return createService(serviceClass, null, TipoAutenticacion.SIN_AUTENTICACION);
+    }
 
-        if (!httpClient.interceptors().contains(logging)) {
+
+    public static <S> S createService(Class<S> serviceClass, String username, String password) {
+        if (!(username.isEmpty() || password.isEmpty())) {
+            String credentials = Credentials.basic(username, password);
+            return createService(serviceClass, credentials, TipoAutenticacion.BASIC);
+        }
+        return createService(serviceClass, null, TipoAutenticacion.SIN_AUTENTICACION);
+    }
+
+    public static <S> S createService(Class<S> serviceClass, final String authtoken, final TipoAutenticacion tipo) {
+
+        /*
+            Si la instancia de retrofit es nula, quiere decir que es la primera vez que vamos a generar el objeto,
+            con lo cual, tenemos que realizar la generación del mismo.
+            Si la instancia de retrofit no es nula, pero el tipoActual del servicio generado no es el mismo que el
+            solicitado, necesitamos generarlo de nuevo (por ejemplo, si actualmente tenemos autenticación básica,
+            y se requiere la autenticación por JWT).
+         */
+
+        httpClient.interceptors().clear();
+
+        if (retrofit == null || tipoActual != tipo ) {
+
             httpClient.addInterceptor(logging);
 
+            // Interceptor que añade dos encabezados
             httpClient.addInterceptor(new Interceptor() {
                 @Override
                 public Response intercept(Chain chain) throws IOException {
@@ -48,9 +82,58 @@ public class ServiceGenerator {
                 }
             });
 
+            if (tipo == TipoAutenticacion.SIN_AUTENTICACION || tipo == TipoAutenticacion.BASIC ) {
+                // Añadimos el interceptor de la master key
+                httpClient.addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request original = chain.request();
+                        HttpUrl originalUrl = original.url();
+
+                        HttpUrl url = originalUrl.newBuilder()
+                                .addQueryParameter("access_token", MASTER_KEY)
+                                .build();
+
+                        Request request = original.newBuilder()
+                                .url(url)
+                                .build();
+
+
+                        return chain.proceed(request);
+                    }
+                });
+            }
+
+            if (authtoken != null) {
+
+
+                httpClient.addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request original = chain.request();
+
+                        String token = null;
+                        if (tipo == TipoAutenticacion.JWT && !authtoken.startsWith("Bearer "))
+                            token = "Bearer " + authtoken;
+                        else
+                            token = authtoken;
+
+
+                        Request request = original.newBuilder()
+                                .header("Authorization", token)
+                                .build();
+
+                        return chain.proceed(request);
+                    }
+                });
+            }
+
+            tipoActual = tipo;
+
             builder.client(httpClient.build());
             retrofit = builder.build();
         }
+
         return retrofit.create(serviceClass);
     }
 
