@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import okhttp3.Credentials;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,16 +38,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                String email_txt = email.getText().toString();
+
+                String username_txt = email.getText().toString();
                 String password_txt = password.getText().toString();
 
-                // String credentials = email_txt + ":" + password_txt;
+                String credentials = Credentials.basic(username_txt, password_txt);
 
-                // final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-
-
-                LoginService service = ServiceGenerator.createService(LoginService.class, email_txt, password_txt);
-                Call<LoginResponse> call = service.doLogin();
+                LoginService service = ServiceGenerator.createService(LoginService.class);
+                Call<LoginResponse> call = service.doLogin(credentials);
 
                 call.enqueue(new Callback<LoginResponse>() {
                     @Override

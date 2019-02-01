@@ -15,12 +15,11 @@ import retrofit2.http.Query;
 
 public interface LoginService {
 
-    // @POST("/auth")
-    // Call<LoginResponse> doLogin(@Query("access_token") String access_token,
-    //                            @Header("Authorization") String authorization);
-
     @POST("/auth")
-    Call<LoginResponse> doLogin();
+    Call<LoginResponse> doLogin(@Header("Authorization") String authorization);
+
+    // @POST("/auth")
+    // Call<LoginResponse> doLogin();
 
 
     // @POST("/users")
