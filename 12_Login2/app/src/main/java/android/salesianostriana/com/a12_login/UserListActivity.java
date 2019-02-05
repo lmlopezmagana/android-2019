@@ -1,6 +1,8 @@
 package android.salesianostriana.com.a12_login;
 
 import android.app.ListActivity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.salesianostriana.com.a12_login.model.ResponseContainer;
 import android.salesianostriana.com.a12_login.model.User;
 import android.salesianostriana.com.a12_login.retrofit.generator.ServiceGenerator;
@@ -27,8 +29,27 @@ public class UserListActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        /*SharedPreferences sharedPreferences = getSharedPreferences(
+                getString(R.string.sharedpreferences_filename),
+                Context.MODE_PRIVATE
+        );
+
+        String jwt = sharedPreferences
+                .getString(getString(R.string.jwt_key), null);
+        */
+
+        String jwt = UtilToken.getToken(this);
+
+        if (jwt == null) {
+            // No hay token
+            // ¿Qué haces en este activity?
+            // Una de dos
+            //      - O consigues otro token
+            //      - O te vas a .... el formulario de Login
+        }
+
         OtherService service = ServiceGenerator.createService(OtherService.class,
-                ServiceGenerator.jwtToken, TipoAutenticacion.JWT);
+                jwt, TipoAutenticacion.JWT);
 
         Call<ResponseContainer<User>> callList =  service.listUsers();
 

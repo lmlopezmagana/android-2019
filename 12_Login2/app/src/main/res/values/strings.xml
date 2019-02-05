@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">12_Login</string>
+
+
+    <!-- Preferencias -->
+    <string name="sharedpreferences_filename">login</string>
+    <string name="jwt_key">JWT_KEY</string>
+
+
 </resources>

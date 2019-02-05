@@ -60,7 +60,8 @@ public class RegistroActivity extends AppCompatActivity {
                                     1) Almacenar el token donde corresponda.
                                     2) Lanzar el siguiente Activity.
                              */
-                            ServiceGenerator.jwtToken = response.body().getToken();
+                            //ServiceGenerator.jwtToken = response.body().getToken();
+                            UtilToken.setToken(RegistroActivity.this, response.body().getToken());
                             startActivity(new Intent(RegistroActivity.this, UserListActivity.class));                            // Toast.makeText(RegistroActivity.this, "Usuario registrado y logeado con éxito", Toast.LENGTH_LONG).show();
                             // Log.d("token", response.body().getToken());
 

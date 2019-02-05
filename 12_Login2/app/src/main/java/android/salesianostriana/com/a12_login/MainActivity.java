@@ -1,6 +1,8 @@
 package android.salesianostriana.com.a12_login;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.salesianostriana.com.a12_login.retrofit.generator.ServiceGenerator;
 import android.salesianostriana.com.a12_login.model.LoginResponse;
 import android.salesianostriana.com.a12_login.retrofit.services.LoginService;
@@ -62,7 +64,15 @@ public class MainActivity extends AppCompatActivity {
                                     1) Almacenar el token donde corresponda.
                                     2) Lanzar el siguiente Activity.
                              */
-                            ServiceGenerator.jwtToken = response.body().getToken();
+                            // ServiceGenerator.jwtToken = response.body().getToken();
+                            /*SharedPreferences sharedPreferences =
+                                    getSharedPreferences(getString(R.string.sharedpreferences_filename),
+                                            Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString(getString(R.string.jwt_key), response.body().getToken());
+                            editor.commit();*/
+                            UtilToken.setToken(MainActivity.this, response.body().getToken());
+
                             startActivity(new Intent(MainActivity.this, UserListActivity.class));
                         }
                     }
